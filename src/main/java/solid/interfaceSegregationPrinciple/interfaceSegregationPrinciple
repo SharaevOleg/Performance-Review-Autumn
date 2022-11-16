@@ -1,0 +1,78 @@
+Рассмотрим теперь принцип разделения интерфейсов.
+
+Допустим у нас имеется интерфейс Payments и в нем есть три метода: оплата WebMoney, оплата банковской карточкой и оплата по номеру телефона.
+
+public interface Payments {
+    void payWebMoney();
+    void payCreditCard();
+    void payPhoneNumber();
+}
+Далее нам надо реализовать два класса-сервиса, которые будут у себя реализовывать различные виды проведения оплат (класс InternetPaymentService и TerminalPaymentService). При этом TerminalPaymentService не будет поддерживать проведение оплат по номеру телефона. Но если мы оба класса имплементим от интерфейса Payments, то мы будем "заставлять" TerminalPaymentService реализовывать метод, который ему не нужен.
+
+public class InternetPaymentService implements Payments{
+    @Override
+    public void payWebMoney() {
+        //logic
+    }
+    @Override
+    public void payCreditCard() {
+        //logic
+    }
+    @Override
+    public void payPhoneNumber() {
+        //logic
+    }
+}
+public class TerminalPaymentService implements Payments{
+    @Override
+    public void payWebMoney() {
+        //logic
+    }
+    @Override
+    public void payCreditCard() {
+        //logic
+    }
+    @Override
+    public void payPhoneNumber() {
+        //???????
+    }
+}
+Таким образом произойдет нарушение принципа разделения интерфейсов.
+
+Для того чтобы этого не происходило необходимо разделить наш исходный интерфейс Payments на несколько и, создавая классы, имплементить в них только те интерфейсы с методами, которые им нужны.
+
+public interface WebMoneyPayment {
+    void payWebMoney();
+}
+public interface CreditCardPayment {
+    void payCreditCard();
+}
+public interface PhoneNumberPayment {
+    void payPhoneNumber();
+}
+public class InternetPaymentService implements WebMoneyPayment,
+                                                CreditCardPayment, 
+                                                  PhoneNumberPayment{
+    @Override
+    public void payWebMoney() {
+        //logic
+    }
+    @Override
+    public void payCreditCard() {
+        //logic
+    }
+    @Override
+    public void payPhoneNumber() {
+        //logic
+    }
+}
+public class TerminalPaymentService implements WebMoneyPayment, CreditCardPayment{
+    @Override
+    public void payWebMoney() {
+        //logic
+    }
+    @Override
+    public void payCreditCard() {
+        //logic
+    }
+}
